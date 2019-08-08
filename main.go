@@ -16,11 +16,11 @@ func main() {
 
 	var input string
 	fmt.Println("---Welcome to the Go calculator---")
-	fmt.Println("---Note that OPERANDS CANNOT EXCEED ONE DIGIT---")
 	fmt.Println("---Type 'exit' at any time to terminate the app---")
 
 	var err error
 
+	out:
 	for err == nil {
 
 		// Retrieve input
@@ -30,8 +30,7 @@ func main() {
 		// Validate input
 		err = validateInput(input)
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			break out
 		}
 
 		// Determine which operators are present, in PEMDAS order
@@ -45,20 +44,35 @@ func main() {
 		additionMatches := []int{}
 		subtractionMatches := []int{}
 
+		// Initialize match maps
+		multiplicationMatchesMap := map[int]bool{}
+		divisionMatchesMap := map[int]bool{}
+		modulusMatchesMap := map[int]bool{}
+		additionMatchesMap := map[int]bool{}
+		subtractionMatchesMap := map[int]bool{}
+
 		// Determine the location of each instance of each operator in the string
 		for i:=0; i<len(matches); i++ {
 			if string(input[matches[i][0]]) == "*" {
+				multiplicationMatchesMap[matches[i][0]] = true
 				multiplicationMatches = append(multiplicationMatches, matches[i][0])
 			} else if string(input[matches[i][0]]) == "/" {
+				divisionMatchesMap[matches[i][0]] = true
 				divisionMatches = append(divisionMatches, matches[i][0])
 			} else if string(input[matches[i][0]]) == "%" {
+				modulusMatchesMap[matches[i][0]] = true
 				modulusMatches = append(modulusMatches, matches[i][0])
 			} else if string(input[matches[i][0]]) == "+" {
+				additionMatchesMap[matches[i][0]] = true
 				additionMatches = append(additionMatches, matches[i][0])
 			} else if string(input[matches[i][0]]) == "-" {
+				subtractionMatchesMap[matches[i][0]] = true
 				subtractionMatches = append(subtractionMatches, matches[i][0])
+			} else if string(input[matches[i][0]]) == "." {
+				// No need to handle this
 			} else {
 				err = errors.New("operator not supported")
+				break out
 			}
 		}
 
@@ -80,41 +94,42 @@ func main() {
 
 			var operation string
 
-			// TODO: determine operation without iterating through each item (possibly with [][]interface{})
-
-			// Determine whether multiplication or division
-			for mi:=0; mi<len(multiplicationMatches); mi++ {
-				if multiplicationMatches[mi] == multDivModMatches[i] {
-					operation = "multiplication"
-				}
-			}
-			// Let's iterate as little as possible by checking for operation first
-			if operation == "" {
-				for di:=0; di<len(divisionMatches); di++ {
-					if divisionMatches[di] == multDivModMatches[i] {
-						operation = "division"
-					}
-				}
-				if operation == "" {
-					for modi:=0; modi<len(modulusMatches); modi++ {
-						if modulusMatches[modi] == multDivModMatches[i] {
-							operation = "modulus"
-						}
-					}
-				}
+			// Determine which operation is being performed at the current index
+			if multiplicationMatchesMap[multDivModMatches[i]] {
+				operation = "multiplication"
+			} else if divisionMatchesMap[multDivModMatches[i]] {
+				operation = "division"
+			} else if modulusMatchesMap[multDivModMatches[i]] {
+				operation = "modulus"
 			}
 
-			firstOperand, err := strconv.Atoi(string(input[multDivModMatches[i] - 1]))
+			// Determine length of operands
+			firstOperandLength := findOperandLength(true, i, input, multDivModMatches)
+			secondOperandLength := findOperandLength(false, i, input, multDivModMatches)
+			if firstOperandLength == 0 {
+				err = errors.New("first operand not found")
+				break out
+			} else if secondOperandLength == 0 {
+				err = errors.New("second operand not found")
+				break out
+			}
+
+			// Retrieve the first and second operand
+			firstOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] - firstOperandLength : multDivModMatches[i]]), 64)
+			fmt.Println(firstOperand)
 			if err != nil {
 				fmt.Println(err.Error())
 				return
 			}
-			secondOperand, err := strconv.Atoi(string(input[multDivModMatches[i] + 1]))
+			secondOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] + 1 : multDivModMatches[i] + secondOperandLength + 1]), 64)
+			err = errors.New("first operand: " + FloatToString(firstOperand) + ", second operand: " + FloatToString(secondOperand))
+			break out
 			if err != nil {
 				fmt.Println(err.Error())
 				return
 			}
 
+			// Perform the operation and store result in temp variable
 			temp, err = performOperation(operation, float64(firstOperand), float64(secondOperand))
 			if err != nil {
 				fmt.Println(err.Error())
@@ -221,7 +236,7 @@ func validateInput(input string) (err error) {
 	}
 
 	// Validate against alpha runes and special characters
-	runes := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$^&_={}[]:;'\"<,>.?\\|"
+	runes := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$^&_={}[]:;'\"<,>?\\|"
 	for _, char := range runes {
 		if strings.Index(input, string(char)) != -1 {
 			return errors.New("invalid input: " + input)
@@ -229,6 +244,35 @@ func validateInput(input string) (err error) {
 	}
 
 	return nil
+
+}
+
+func findOperandLength(isFirst bool, i int, input string, matches []int) (operandLength int) {
+
+	var operandComplete bool
+	var validOperandRunes = "0123456789."
+
+	for offset:=1; !operandComplete; offset++ {
+		var validChar bool
+		for _, char := range validOperandRunes {
+			if isFirst {
+				if strings.Index(string(input[matches[i] - offset]), string(char)) != -1 {
+					validChar = true
+				}
+			} else {
+				if strings.Index(string(input[matches[i] + offset]), string(char)) != -1 {
+					validChar = true
+				}
+			}
+		}
+		if !validChar {
+			operandComplete = true
+			break
+		}
+		operandLength++
+	}
+
+	return
 
 }
 

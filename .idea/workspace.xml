@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="06f138eb-0446-4fd4-a50f-6c20de9509d3" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/main.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="329">
+              <caret line="248" lean-forward="true" selection-start-line="248" selection-end-line="248" />
+              <folding>
+                <element signature="e#635#678#0" />
+                <element signature="e#1336#2000#0" />
+                <element signature="e#1380#1485#0" />
+                <element signature="e#1530#1597#0" />
+                <element signature="e#1642#1707#0" />
+                <element signature="e#1752#1819#0" />
+                <element signature="e#1864#1937#0" />
+                <element signature="e#2207#2209#0" />
+                <element signature="e#2205#2272#0" />
+                <element signature="e#2400#2459#0" />
+                <element signature="e#2897#2908#0" />
+                <element signature="e#2920#2931#0" />
+                <element signature="e#2961#2963#0" />
+                <element signature="e#3420#3422#0" />
+                <element signature="e#3503#3505#0" />
+                <element signature="e#3209#3255#0" />
+                <element signature="e#3352#3398#0" />
+                <element signature="e#3507#3553#0" />
+                <element signature="e#3944#4003#0" />
+                <element signature="e#4322#5432#0" />
+                <element signature="e#4222#4311#0" />
+                <element signature="e#4271#4306#0" />
+                <element signature="e#4408#4562#0" />
+                <element signature="e#4458#4557#0" />
+                <element signature="e#4511#4551#0" />
+                <element signature="e#4655#4701#0" />
+                <element signature="e#4794#4840#0" />
+                <element signature="e#4949#4995#0" />
+                <element signature="n#!!block;n#performOperation#0" />
+                <element signature="e#5554#6061#0" />
+                <element signature="e#5575#5662#0" />
+                <element signature="e#5664#5745#0" />
+                <element signature="e#5747#5819#0" />
+                <element signature="e#5821#5902#0" />
+                <element signature="e#5904#5988#0" />
+                <element signature="e#5990#6057#0" />
+                <element signature="n#!!block;n#validateInput#0" />
+                <element signature="e#6210#6252#0" />
+                <element signature="e#6428#6532#0" />
+                <element signature="e#6476#6529#0" />
+                <element signature="n#!!block;n#findOperandLength#0" />
+                <element signature="e#7665#7912#0" />
+                <element signature="e#7729#7843#0" />
+                <element signature="e#7741#7743#0" />
+                <element signature="e#7820#7847#0" />
+                <element signature="e#7758#7769#0" />
+                <element signature="e#7939#7966#0" />
+                <element signature="e#7784#7819#0" />
+                <element signature="n#!!block;n#FloatToString#0" />
+                <element signature="n#!!block;n#removeWhitespace#0" />
+                <element signature="e#6856#6914#0" />
+                <element signature="e#6882#6900#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>removewhitespace</find>
+      <find>operator not supp</find>
+    </findStrings>
+  </component>
+  <component name="GOROOT" path="/usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/main.go" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
+    <option name="y" value="23" />
+    <option name="width" value="1440" />
+    <option name="height" value="873" />
+  </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="go-calculator" type="b2602c69:ProjectViewProjectNode" />
+              <item name="go-calculator" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="right" id="Database" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.32969698" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="248" lean-forward="true" selection-start-line="248" selection-end-line="248" />
+          <folding>
+            <element signature="e#635#678#0" />
+            <element signature="e#1336#2000#0" />
+            <element signature="e#1380#1485#0" />
+            <element signature="e#1530#1597#0" />
+            <element signature="e#1642#1707#0" />
+            <element signature="e#1752#1819#0" />
+            <element signature="e#1864#1937#0" />
+            <element signature="e#2207#2209#0" />
+            <element signature="e#2205#2272#0" />
+            <element signature="e#2400#2459#0" />
+            <element signature="e#2897#2908#0" />
+            <element signature="e#2920#2931#0" />
+            <element signature="e#2961#2963#0" />
+            <element signature="e#3420#3422#0" />
+            <element signature="e#3503#3505#0" />
+            <element signature="e#3209#3255#0" />
+            <element signature="e#3352#3398#0" />
+            <element signature="e#3507#3553#0" />
+            <element signature="e#3944#4003#0" />
+            <element signature="e#4322#5432#0" />
+            <element signature="e#4222#4311#0" />
+            <element signature="e#4271#4306#0" />
+            <element signature="e#4408#4562#0" />
+            <element signature="e#4458#4557#0" />
+            <element signature="e#4511#4551#0" />
+            <element signature="e#4655#4701#0" />
+            <element signature="e#4794#4840#0" />
+            <element signature="e#4949#4995#0" />
+            <element signature="n#!!block;n#performOperation#0" />
+            <element signature="e#5554#6061#0" />
+            <element signature="e#5575#5662#0" />
+            <element signature="e#5664#5745#0" />
+            <element signature="e#5747#5819#0" />
+            <element signature="e#5821#5902#0" />
+            <element signature="e#5904#5988#0" />
+            <element signature="e#5990#6057#0" />
+            <element signature="n#!!block;n#validateInput#0" />
+            <element signature="e#6210#6252#0" />
+            <element signature="e#6428#6532#0" />
+            <element signature="e#6476#6529#0" />
+            <element signature="n#!!block;n#findOperandLength#0" />
+            <element signature="e#7665#7912#0" />
+            <element signature="e#7729#7843#0" />
+            <element signature="e#7741#7743#0" />
+            <element signature="e#7820#7847#0" />
+            <element signature="e#7758#7769#0" />
+            <element signature="e#7939#7966#0" />
+            <element signature="e#7784#7819#0" />
+            <element signature="n#!!block;n#FloatToString#0" />
+            <element signature="n#!!block;n#removeWhitespace#0" />
+            <element signature="e#6856#6914#0" />
+            <element signature="e#6882#6900#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
