@@ -30,7 +30,12 @@ func main() {
 		// Validate input
 		err = validateInput(input)
 		if err != nil {
-			break out
+			fmt.Println(err.Error())
+			if err.Error() == "app terminated" {
+				break out
+			}
+			err = nil
+			continue
 		}
 
 		// Determine which operators are present, in PEMDAS order
@@ -38,11 +43,11 @@ func main() {
 		matches := operatorOptions.FindAllStringIndex(input, -1)
 
 		// Initialize match slices
-		multiplicationMatches := []int{}
-		divisionMatches := []int{}
-		modulusMatches := []int{}
-		additionMatches := []int{}
-		subtractionMatches := []int{}
+		var multiplicationMatches []int
+		var divisionMatches []int
+		var modulusMatches []int
+		var additionMatches []int
+		var subtractionMatches []int
 
 		// Initialize match maps
 		multiplicationMatchesMap := map[int]bool{}
@@ -72,6 +77,7 @@ func main() {
 				// No need to handle this
 			} else {
 				err = errors.New("operator not supported")
+				fmt.Println(err.Error())
 				break out
 			}
 		}
@@ -108,37 +114,61 @@ func main() {
 			secondOperandLength := findOperandLength(false, i, input, multDivModMatches)
 			if firstOperandLength == 0 {
 				err = errors.New("first operand not found")
+				fmt.Println(err.Error())
 				break out
 			} else if secondOperandLength == 0 {
 				err = errors.New("second operand not found")
+				fmt.Println(err.Error())
 				break out
 			}
 
 			// Retrieve the first and second operand
 			firstOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] - firstOperandLength : multDivModMatches[i]]), 64)
-			fmt.Println(firstOperand)
 			if err != nil {
 				fmt.Println(err.Error())
-				return
+				break out
 			}
 			secondOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] + 1 : multDivModMatches[i] + secondOperandLength + 1]), 64)
-			err = errors.New("first operand: " + FloatToString(firstOperand) + ", second operand: " + FloatToString(secondOperand))
-			break out
 			if err != nil {
 				fmt.Println(err.Error())
-				return
+				break out
 			}
 
 			// Perform the operation and store result in temp variable
 			temp, err = performOperation(operation, float64(firstOperand), float64(secondOperand))
 			if err != nil {
 				fmt.Println(err.Error())
-				return
+				break out
 			}
 
 			// Edit the original equation, replacing operands and operator with result
-			input = replaceIndex(input, FloatToString(temp), multDivModMatches[i]-1, multDivModMatches[i]+1)
+			tempStr := FloatToString(temp)
+			oldInputLen := len(input)
+			input = replaceIndex(input, tempStr, multDivModMatches[i]-firstOperandLength, multDivModMatches[i]+secondOperandLength)
+			newInputLen := len(input)
 			fmt.Println("Input update: " + input)
+
+			// Update indexes of other operators based on input modification
+			if i != len(multDivModMatches) - 1 {
+				for a:=i+1; a<len(multDivModMatches); a++ {
+					// For each item after i in the slice, modify location index
+					multDivModMatches[a] += newInputLen - oldInputLen
+				}
+			}
+
+			// Update operation maps
+			for k, _ := range multiplicationMatchesMap {
+				multiplicationMatchesMap[k + newInputLen - oldInputLen] = true
+				delete(multiplicationMatchesMap, k)
+			}
+			for k, _ := range divisionMatchesMap {
+				divisionMatchesMap[k + newInputLen - oldInputLen] = true
+				delete(divisionMatchesMap, k)
+			}
+			for k, _ := range modulusMatchesMap {
+				modulusMatchesMap[k + newInputLen - oldInputLen] = true
+				delete(modulusMatchesMap, k)
+			}
 
 		}
 
@@ -198,7 +228,6 @@ func main() {
 
 	}
 
-	fmt.Println(err.Error())
 	return
 
 }
@@ -256,12 +285,20 @@ func findOperandLength(isFirst bool, i int, input string, matches []int) (operan
 		var validChar bool
 		for _, char := range validOperandRunes {
 			if isFirst {
-				if strings.Index(string(input[matches[i] - offset]), string(char)) != -1 {
-					validChar = true
+				if matches[i] - offset >= 0 {
+					if strings.Index(string(input[matches[i] - offset]), string(char)) != -1 {
+						validChar = true
+					}
+				} else {
+					break
 				}
 			} else {
-				if strings.Index(string(input[matches[i] + offset]), string(char)) != -1 {
-					validChar = true
+				if matches[i] + offset < len(input) {
+					if strings.Index(string(input[matches[i] + offset]), string(char)) != -1 {
+						validChar = true
+					}
+				} else {
+					break
 				}
 			}
 		}

@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="06f138eb-0446-4fd4-a50f-6c20de9509d3" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/go-calculator" beforeDir="false" afterPath="$PROJECT_DIR$/go-calculator" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,27 +17,10 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
-              <caret line="248" lean-forward="true" selection-start-line="248" selection-end-line="248" />
+            <state relative-caret-position="1061">
+              <caret line="174" selection-start-line="174" selection-end-line="174" />
               <folding>
-                <element signature="e#635#678#0" />
-                <element signature="e#1336#2000#0" />
-                <element signature="e#1380#1485#0" />
-                <element signature="e#1530#1597#0" />
-                <element signature="e#1642#1707#0" />
-                <element signature="e#1752#1819#0" />
-                <element signature="e#1864#1937#0" />
-                <element signature="e#2207#2209#0" />
-                <element signature="e#2205#2272#0" />
                 <element signature="e#2400#2459#0" />
-                <element signature="e#2897#2908#0" />
-                <element signature="e#2920#2931#0" />
-                <element signature="e#2961#2963#0" />
-                <element signature="e#3420#3422#0" />
-                <element signature="e#3503#3505#0" />
-                <element signature="e#3209#3255#0" />
-                <element signature="e#3352#3398#0" />
-                <element signature="e#3507#3553#0" />
                 <element signature="e#3944#4003#0" />
                 <element signature="e#4322#5432#0" />
                 <element signature="e#4222#4311#0" />
@@ -47,14 +31,11 @@
                 <element signature="e#4655#4701#0" />
                 <element signature="e#4794#4840#0" />
                 <element signature="e#4949#4995#0" />
-                <element signature="n#!!block;n#performOperation#0" />
-                <element signature="e#5554#6061#0" />
                 <element signature="e#5575#5662#0" />
                 <element signature="e#5664#5745#0" />
                 <element signature="e#5747#5819#0" />
                 <element signature="e#5821#5902#0" />
                 <element signature="e#5904#5988#0" />
-                <element signature="e#5990#6057#0" />
                 <element signature="n#!!block;n#validateInput#0" />
                 <element signature="e#6210#6252#0" />
                 <element signature="e#6428#6532#0" />
@@ -63,9 +44,13 @@
                 <element signature="e#7665#7912#0" />
                 <element signature="e#7729#7843#0" />
                 <element signature="e#7741#7743#0" />
-                <element signature="e#7820#7847#0" />
+                <element signature="e#7769#7771#0" />
+                <element signature="e#7849#7878#0" />
+                <element signature="e#7892#7905#0" />
                 <element signature="e#7758#7769#0" />
-                <element signature="e#7939#7966#0" />
+                <element signature="e#7964#7966#0" />
+                <element signature="e#8043#8072#0" />
+                <element signature="e#8086#8099#0" />
                 <element signature="e#7784#7819#0" />
                 <element signature="n#!!block;n#FloatToString#0" />
                 <element signature="n#!!block;n#removeWhitespace#0" />
@@ -82,6 +67,9 @@
     <findStrings>
       <find>removewhitespace</find>
       <find>operator not supp</find>
+      <find>invalid input</find>
+      <find>app terminated</find>
+      <find>break out</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
@@ -105,9 +93,9 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="y" value="23" />
-    <option name="width" value="1440" />
-    <option name="height" value="873" />
+    <option name="x" value="724" />
+    <option name="width" value="716" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="1" id="Add" />
@@ -152,6 +140,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24964234" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -162,7 +151,7 @@
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" visible="true" weight="0.32969698" />
+      <window_info anchor="bottom" id="Terminal" weight="0.32969698" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -182,27 +171,10 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="248" lean-forward="true" selection-start-line="248" selection-end-line="248" />
+        <state relative-caret-position="1061">
+          <caret line="174" selection-start-line="174" selection-end-line="174" />
           <folding>
-            <element signature="e#635#678#0" />
-            <element signature="e#1336#2000#0" />
-            <element signature="e#1380#1485#0" />
-            <element signature="e#1530#1597#0" />
-            <element signature="e#1642#1707#0" />
-            <element signature="e#1752#1819#0" />
-            <element signature="e#1864#1937#0" />
-            <element signature="e#2207#2209#0" />
-            <element signature="e#2205#2272#0" />
             <element signature="e#2400#2459#0" />
-            <element signature="e#2897#2908#0" />
-            <element signature="e#2920#2931#0" />
-            <element signature="e#2961#2963#0" />
-            <element signature="e#3420#3422#0" />
-            <element signature="e#3503#3505#0" />
-            <element signature="e#3209#3255#0" />
-            <element signature="e#3352#3398#0" />
-            <element signature="e#3507#3553#0" />
             <element signature="e#3944#4003#0" />
             <element signature="e#4322#5432#0" />
             <element signature="e#4222#4311#0" />
@@ -213,14 +185,11 @@
             <element signature="e#4655#4701#0" />
             <element signature="e#4794#4840#0" />
             <element signature="e#4949#4995#0" />
-            <element signature="n#!!block;n#performOperation#0" />
-            <element signature="e#5554#6061#0" />
             <element signature="e#5575#5662#0" />
             <element signature="e#5664#5745#0" />
             <element signature="e#5747#5819#0" />
             <element signature="e#5821#5902#0" />
             <element signature="e#5904#5988#0" />
-            <element signature="e#5990#6057#0" />
             <element signature="n#!!block;n#validateInput#0" />
             <element signature="e#6210#6252#0" />
             <element signature="e#6428#6532#0" />
@@ -229,9 +198,13 @@
             <element signature="e#7665#7912#0" />
             <element signature="e#7729#7843#0" />
             <element signature="e#7741#7743#0" />
-            <element signature="e#7820#7847#0" />
+            <element signature="e#7769#7771#0" />
+            <element signature="e#7849#7878#0" />
+            <element signature="e#7892#7905#0" />
             <element signature="e#7758#7769#0" />
-            <element signature="e#7939#7966#0" />
+            <element signature="e#7964#7966#0" />
+            <element signature="e#8043#8072#0" />
+            <element signature="e#8086#8099#0" />
             <element signature="e#7784#7819#0" />
             <element signature="n#!!block;n#FloatToString#0" />
             <element signature="n#!!block;n#removeWhitespace#0" />
