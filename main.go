@@ -28,7 +28,7 @@ func main() {
 		fmt.Scanln(&input)
 
 		// Validate input
-		err = validateInput(input)
+		input, err = validateInput(input)
 		if err != nil {
 			fmt.Println(err.Error())
 			if err.Error() == "app terminated" {
@@ -38,80 +38,33 @@ func main() {
 			continue
 		}
 
-		// Determine which operators are present, in PEMDAS order
-		operatorOptions := regexp.MustCompile("[+-/*%]")
-		matches := operatorOptions.FindAllStringIndex(input, -1)
-
-		// Initialize match slices
-		var multiplicationMatches []int
-		var divisionMatches []int
-		var modulusMatches []int
-		var additionMatches []int
-		var subtractionMatches []int
-
-		// Initialize match maps
-		multiplicationMatchesMap := map[int]bool{}
-		divisionMatchesMap := map[int]bool{}
-		modulusMatchesMap := map[int]bool{}
-		additionMatchesMap := map[int]bool{}
-		subtractionMatchesMap := map[int]bool{}
-
-		// Determine the location of each instance of each operator in the string
-		for i:=0; i<len(matches); i++ {
-			if string(input[matches[i][0]]) == "*" {
-				multiplicationMatchesMap[matches[i][0]] = true
-				multiplicationMatches = append(multiplicationMatches, matches[i][0])
-			} else if string(input[matches[i][0]]) == "/" {
-				divisionMatchesMap[matches[i][0]] = true
-				divisionMatches = append(divisionMatches, matches[i][0])
-			} else if string(input[matches[i][0]]) == "%" {
-				modulusMatchesMap[matches[i][0]] = true
-				modulusMatches = append(modulusMatches, matches[i][0])
-			} else if string(input[matches[i][0]]) == "+" {
-				additionMatchesMap[matches[i][0]] = true
-				additionMatches = append(additionMatches, matches[i][0])
-			} else if string(input[matches[i][0]]) == "-" {
-				subtractionMatchesMap[matches[i][0]] = true
-				subtractionMatches = append(subtractionMatches, matches[i][0])
-			} else if string(input[matches[i][0]]) == "." {
-				// No need to handle this
-			} else {
-				err = errors.New("operator not supported")
-				fmt.Println(err.Error())
-				break out
-			}
+		// Determine the location of each operator in the input string
+		multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err := findOperators(input)
+		if err != nil {
+			fmt.Println(err.Error())
+			break out
 		}
 
 		// Initialize temp container for results of individual expressions
 		var temp float64
 
-
-
-		// Perform multiplication, division, and modulus first
-
-		// Order occurrences of '*', '/', and '%' in order of index
-		multDivMatches := append(multiplicationMatches, divisionMatches...)
-		multDivModMatches := append(multDivMatches, modulusMatches...)
-		sort.Slice(multDivModMatches, func(i, j int) bool {
-			return multDivModMatches[i] < multDivModMatches[j]
-		})
 		// Perform mult/div/mod operations in operator agnostic order
-		for i:=0; i<len(multDivModMatches); i++ {
+		for multDivModMatches != nil {
 
 			var operation string
 
 			// Determine which operation is being performed at the current index
-			if multiplicationMatchesMap[multDivModMatches[i]] {
+			if multiplicationMatchesMap[multDivModMatches[0]] {
 				operation = "multiplication"
-			} else if divisionMatchesMap[multDivModMatches[i]] {
+			} else if divisionMatchesMap[multDivModMatches[0]] {
 				operation = "division"
-			} else if modulusMatchesMap[multDivModMatches[i]] {
+			} else if modulusMatchesMap[multDivModMatches[0]] {
 				operation = "modulus"
 			}
 
 			// Determine length of operands
-			firstOperandLength := findOperandLength(true, i, input, multDivModMatches)
-			secondOperandLength := findOperandLength(false, i, input, multDivModMatches)
+			firstOperandLength := findOperandLength(true, 0, input, multDivModMatches)
+			secondOperandLength := findOperandLength(false, 0, input, multDivModMatches)
 			if firstOperandLength == 0 {
 				err = errors.New("first operand not found")
 				fmt.Println(err.Error())
@@ -123,12 +76,12 @@ func main() {
 			}
 
 			// Retrieve the first and second operand
-			firstOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] - firstOperandLength : multDivModMatches[i]]), 64)
+			firstOperand, err := strconv.ParseFloat(string(input[multDivModMatches[0] - firstOperandLength : multDivModMatches[0]]), 64)
 			if err != nil {
 				fmt.Println(err.Error())
 				break out
 			}
-			secondOperand, err := strconv.ParseFloat(string(input[multDivModMatches[i] + 1 : multDivModMatches[i] + secondOperandLength + 1]), 64)
+			secondOperand, err := strconv.ParseFloat(string(input[multDivModMatches[0] + 1 : multDivModMatches[0] + secondOperandLength + 1]), 64)
 			if err != nil {
 				fmt.Println(err.Error())
 				break out
@@ -143,83 +96,73 @@ func main() {
 
 			// Edit the original equation, replacing operands and operator with result
 			tempStr := FloatToString(temp)
-			oldInputLen := len(input)
-			input = replaceIndex(input, tempStr, multDivModMatches[i]-firstOperandLength, multDivModMatches[i]+secondOperandLength)
-			newInputLen := len(input)
+			input = replaceIndex(input, tempStr, multDivModMatches[0]-firstOperandLength, multDivModMatches[0]+secondOperandLength)
 			fmt.Println("Input update: " + input)
 
-			// Update indexes of other operators based on input modification
-			if i != len(multDivModMatches) - 1 {
-				for a:=i+1; a<len(multDivModMatches); a++ {
-					// For each item after i in the slice, modify location index
-					multDivModMatches[a] += newInputLen - oldInputLen
-				}
-			}
-
-			// Update operation maps
-			for k, _ := range multiplicationMatchesMap {
-				multiplicationMatchesMap[k + newInputLen - oldInputLen] = true
-				delete(multiplicationMatchesMap, k)
-			}
-			for k, _ := range divisionMatchesMap {
-				divisionMatchesMap[k + newInputLen - oldInputLen] = true
-				delete(divisionMatchesMap, k)
-			}
-			for k, _ := range modulusMatchesMap {
-				modulusMatchesMap[k + newInputLen - oldInputLen] = true
-				delete(modulusMatchesMap, k)
+			// Determine the location of each instance of each operator in the string
+			multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err = findOperators(input)
+			if err != nil {
+				fmt.Println(err.Error())
+				break out
 			}
 
 		}
 
-
-
-		// Perform addition and subtraction last
-
-		addSubMatches := append(additionMatches, subtractionMatches...)
-		sort.Slice(multDivModMatches, func(i, j int) bool {
-			return multDivModMatches[i] < multDivModMatches[j]
-		})
 		// Perform add/sub operations in operator agnostic order
-		for i:=0; i<len(addSubMatches); i++ {
+		for addSubMatches != nil {
 
 			var operation string
 
-			// Determine whether addition or subtraction
-			for ai:=0; ai<len(additionMatches); ai++ {
-				if additionMatches[ai] == addSubMatches[i] {
-					operation = "addition"
-				}
-			}
-			// Let's iterate as little as possible by checking for operation first
-			if operation == "" {
-				for si:=0; si<len(subtractionMatches); si++ {
-					if subtractionMatches[si] == addSubMatches[i] {
-						operation = "subtraction"
-					}
-				}
+			// Determine which operation is being performed
+			if additionMatchesMap[addSubMatches[0]] {
+				operation = "addition"
+			} else if subtractionMatchesMap[addSubMatches[0]] {
+				operation = "subtraction"
 			}
 
-			firstOperand, err := strconv.Atoi(string(input[addSubMatches[i] - 1]))
-			if err != nil {
+			// Determine length of operands
+			firstOperandLength := findOperandLength(true, 0, input, addSubMatches)
+			secondOperandLength := findOperandLength(false, 0, input, addSubMatches)
+			if firstOperandLength == 0 {
+				err = errors.New("first operand not found")
 				fmt.Println(err.Error())
-				return
-			}
-			secondOperand, err := strconv.Atoi(string(input[addSubMatches[i] + 1]))
-			if err != nil {
+				break out
+			} else if secondOperandLength == 0 {
+				err = errors.New("second operand not found")
 				fmt.Println(err.Error())
-				return
+				break out
 			}
 
+			// Retrieve the first and second operand
+			firstOperand, err := strconv.ParseFloat(string(input[addSubMatches[0] - firstOperandLength : addSubMatches[0]]), 64)
+			if err != nil {
+				fmt.Println(err.Error())
+				break out
+			}
+			secondOperand, err := strconv.ParseFloat(string(input[addSubMatches[0] + 1 : addSubMatches[0] + secondOperandLength + 1]), 64)
+			if err != nil {
+				fmt.Println(err.Error())
+				break out
+			}
+
+			// Perform the operation and store result in temp variable
 			temp, err = performOperation(operation, float64(firstOperand), float64(secondOperand))
 			if err != nil {
 				fmt.Println(err.Error())
-				return
+				break out
 			}
 
 			// Edit the original equation, replacing operands and operator with result
-			input = replaceIndex(input, FloatToString(temp), addSubMatches[i]-1, addSubMatches[i]+1)
+			tempStr := FloatToString(temp)
+			input = replaceIndex(input, tempStr, addSubMatches[0]-firstOperandLength, addSubMatches[0]+secondOperandLength)
 			fmt.Println("Input update: " + input)
+
+			// Determine the location of each instance of each operator in the string
+			multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err = findOperators(input)
+			if err != nil {
+				fmt.Println(err.Error())
+				break out
+			}
 
 		}
 
@@ -257,29 +200,95 @@ func performOperation(operation string, firstOperand, secondOperand float64) (te
 
 }
 
-func validateInput(input string) (err error) {
+func validateInput(input string) (newInput string, err error) {
+
+	// Prepare new input string
+	newInput = input
 
 	// Check if the user wants to exit app
 	if strings.ToLower(input) == "exit" {
-		return errors.New("app terminated")
+		return "", errors.New("app terminated")
 	}
 
 	// Validate against alpha runes and special characters
 	runes := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$^&_={}[]:;'\"<,>?\\|"
 	for _, char := range runes {
 		if strings.Index(input, string(char)) != -1 {
-			return errors.New("invalid input: " + input)
+			return "", errors.New("invalid input: " + input)
 		}
 	}
 
-	return nil
+	// Subtraction will be handled as addition of negative numbers
+	newInput = strings.ReplaceAll(newInput, "-", "+-")
+	fmt.Println("input updated, new input: " + newInput)
+
+	return newInput, nil
+
+}
+
+func findOperators(input string) (multDivModMatches, addSubMatches []int, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap map[int]bool, err error) {
+
+	// Determine which operators are present, in PEMDAS order
+	operatorOptions := regexp.MustCompile("[+/*%]")
+	matches := operatorOptions.FindAllStringIndex(input, -1)
+
+	// Initialize match slices
+	var multiplicationMatches []int
+	var divisionMatches []int
+	var modulusMatches []int
+	var additionMatches []int
+
+	// Initialize match maps
+	multiplicationMatchesMap = make(map[int]bool)
+	divisionMatchesMap = make(map[int]bool)
+	modulusMatchesMap = make(map[int]bool)
+	additionMatchesMap = make(map[int]bool)
+	subtractionMatchesMap = make(map[int]bool)
+
+	// Find and label each operator instance
+	for i:=0; i<len(matches); i++ {
+		if string(input[matches[i][0]]) == "*" {
+			multiplicationMatchesMap[matches[i][0]] = true
+			multiplicationMatches = append(multiplicationMatches, matches[i][0])
+		} else if string(input[matches[i][0]]) == "/" {
+			divisionMatchesMap[matches[i][0]] = true
+			divisionMatches = append(divisionMatches, matches[i][0])
+		} else if string(input[matches[i][0]]) == "%" {
+			modulusMatchesMap[matches[i][0]] = true
+			modulusMatches = append(modulusMatches, matches[i][0])
+		} else if string(input[matches[i][0]]) == "+" {
+			additionMatchesMap[matches[i][0]] = true
+			additionMatches = append(additionMatches, matches[i][0])
+		} else if string(input[matches[i][0]]) == "-" {
+			// No need to handle this
+		} else if string(input[matches[i][0]]) == "." {
+			// No need to handle this
+		} else {
+			err = errors.New("operator not supported")
+		}
+	}
+
+	// Concatenate and sort all related operations
+	multDivMatches := append(multiplicationMatches, divisionMatches...)
+	multDivModMatches = append(multDivMatches, modulusMatches...)
+	sort.Slice(multDivModMatches, func(i, j int) bool {
+		return multDivModMatches[i] < multDivModMatches[j]
+	})
+
+	// For now, addition and subtraction will be synonymous operations
+	addSubMatches = additionMatches
+	sort.Slice(addSubMatches, func(i, j int) bool {
+		return addSubMatches[i] < addSubMatches[j]
+	})
+
+	return
 
 }
 
 func findOperandLength(isFirst bool, i int, input string, matches []int) (operandLength int) {
 
 	var operandComplete bool
-	var validOperandRunes = "0123456789."
+	var validOperandRunes = "0123456789.-"
 
 	for offset:=1; !operandComplete; offset++ {
 		var validChar bool
