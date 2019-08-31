@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"regexp"
 	"errors"
 	"sort"
@@ -10,13 +12,15 @@ import (
 	"unicode"
 )
 
-// TODO: add parentheses, exponents functionality, allow for more than 1-digit numbers
+// TODO: add parentheses and exponents functionality
 
 func main() {
 
 	var input string
-	fmt.Println("---Welcome to the Go calculator---")
-	fmt.Println("---Type 'exit' at any time to terminate the app---")
+	fmt.Println("--------------------")
+	fmt.Println("Welcome to the Go calculator")
+	fmt.Println("Type 'exit' at any time to terminate the app")
+	fmt.Println("--------------------")
 
 	var err error
 
@@ -25,7 +29,16 @@ func main() {
 
 		// Retrieve input
 		fmt.Print("Enter a mathematical expression using operators (+,-,/,*,%) and numbers only: ")
-		fmt.Scanln(&input)
+		scanner := bufio.NewScanner(os.Stdin)
+		if scanner.Scan() {
+			input = scanner.Text()
+		} else {
+			fmt.Println("Failed to scan input")
+			break out
+		}
+
+		// Store original input for printing result
+		originalInput := input
 
 		// Validate input
 		input, err = validateInput(input)
@@ -39,7 +52,7 @@ func main() {
 		}
 
 		// Determine the location of each operator in the input string
-		multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err := findOperators(input)
+		input, multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, err := findOperators(input)
 		if err != nil {
 			fmt.Println(err.Error())
 			break out
@@ -49,7 +62,7 @@ func main() {
 		var temp float64
 
 		// Perform mult/div/mod operations in operator agnostic order
-		for multDivModMatches != nil {
+		for multDivModMatches != nil && len(multDivModMatches) > 0 {
 
 			var operation string
 
@@ -95,12 +108,11 @@ func main() {
 			}
 
 			// Edit the original equation, replacing operands and operator with result
-			tempStr := FloatToString(temp)
+			tempStr := floatToString(temp)
 			input = replaceIndex(input, tempStr, multDivModMatches[0]-firstOperandLength, multDivModMatches[0]+secondOperandLength)
-			fmt.Println("Input update: " + input)
 
 			// Determine the location of each instance of each operator in the string
-			multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err = findOperators(input)
+			input, multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, err = findOperators(input)
 			if err != nil {
 				fmt.Println(err.Error())
 				break out
@@ -109,15 +121,13 @@ func main() {
 		}
 
 		// Perform add/sub operations in operator agnostic order
-		for addSubMatches != nil {
+		for addSubMatches != nil && len(addSubMatches) > 0 {
 
 			var operation string
 
 			// Determine which operation is being performed
 			if additionMatchesMap[addSubMatches[0]] {
 				operation = "addition"
-			} else if subtractionMatchesMap[addSubMatches[0]] {
-				operation = "subtraction"
 			}
 
 			// Determine length of operands
@@ -153,12 +163,11 @@ func main() {
 			}
 
 			// Edit the original equation, replacing operands and operator with result
-			tempStr := FloatToString(temp)
+			tempStr := floatToString(temp)
 			input = replaceIndex(input, tempStr, addSubMatches[0]-firstOperandLength, addSubMatches[0]+secondOperandLength)
-			fmt.Println("Input update: " + input)
 
 			// Determine the location of each instance of each operator in the string
-			multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap, err = findOperators(input)
+			input, multDivModMatches, addSubMatches, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, err = findOperators(input)
 			if err != nil {
 				fmt.Println(err.Error())
 				break out
@@ -167,7 +176,9 @@ func main() {
 		}
 
 		// At this point the input should reflect the result
-		fmt.Println("Result: " + input)
+		fmt.Println("--------------------")
+		fmt.Println("Result: " + originalInput + " = " + input)
+		fmt.Println("--------------------")
 
 	}
 
@@ -203,6 +214,7 @@ func performOperation(operation string, firstOperand, secondOperand float64) (te
 func validateInput(input string) (newInput string, err error) {
 
 	// Prepare new input string
+	input = removeWhitespace(input)
 	newInput = input
 
 	// Check if the user wants to exit app
@@ -220,17 +232,15 @@ func validateInput(input string) (newInput string, err error) {
 
 	// Subtraction will be handled as addition of negative numbers
 	newInput = strings.ReplaceAll(newInput, "-", "+-")
-	fmt.Println("input updated, new input: " + newInput)
 
 	return newInput, nil
 
 }
 
-func findOperators(input string) (multDivModMatches, addSubMatches []int, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap, subtractionMatchesMap map[int]bool, err error) {
+func findOperators(input string) (newInput string, multDivModMatches, addSubMatches []int, multiplicationMatchesMap, divisionMatchesMap, modulusMatchesMap, additionMatchesMap map[int]bool, err error) {
 
-	// Determine which operators are present, in PEMDAS order
-	operatorOptions := regexp.MustCompile("[+/*%]")
-	matches := operatorOptions.FindAllStringIndex(input, -1)
+	var success bool
+	newInput = input
 
 	// Initialize match slices
 	var multiplicationMatches []int
@@ -238,34 +248,71 @@ func findOperators(input string) (multDivModMatches, addSubMatches []int, multip
 	var modulusMatches []int
 	var additionMatches []int
 
-	// Initialize match maps
-	multiplicationMatchesMap = make(map[int]bool)
-	divisionMatchesMap = make(map[int]bool)
-	modulusMatchesMap = make(map[int]bool)
-	additionMatchesMap = make(map[int]bool)
-	subtractionMatchesMap = make(map[int]bool)
+	// Repeat the mapping process until all subtraction/negative ambiguity is sorted out (this should not require more than 2 iterations!)
+	for !success {
 
-	// Find and label each operator instance
-	for i:=0; i<len(matches); i++ {
-		if string(input[matches[i][0]]) == "*" {
-			multiplicationMatchesMap[matches[i][0]] = true
-			multiplicationMatches = append(multiplicationMatches, matches[i][0])
-		} else if string(input[matches[i][0]]) == "/" {
-			divisionMatchesMap[matches[i][0]] = true
-			divisionMatches = append(divisionMatches, matches[i][0])
-		} else if string(input[matches[i][0]]) == "%" {
-			modulusMatchesMap[matches[i][0]] = true
-			modulusMatches = append(modulusMatches, matches[i][0])
-		} else if string(input[matches[i][0]]) == "+" {
-			additionMatchesMap[matches[i][0]] = true
-			additionMatches = append(additionMatches, matches[i][0])
-		} else if string(input[matches[i][0]]) == "-" {
-			// No need to handle this
-		} else if string(input[matches[i][0]]) == "." {
-			// No need to handle this
-		} else {
-			err = errors.New("operator not supported")
+		success = true
+
+		// Reset match slices
+		multiplicationMatches = []int{}
+		divisionMatches = []int{}
+		modulusMatches = []int{}
+		additionMatches = []int{}
+
+		// Reset match maps
+		multiplicationMatchesMap = make(map[int]bool)
+		divisionMatchesMap = make(map[int]bool)
+		modulusMatchesMap = make(map[int]bool)
+		additionMatchesMap = make(map[int]bool)
+
+		// Determine which operators are present, in PEMDAS order
+		operatorOptions := regexp.MustCompile("[+-/*%]")
+		matches := operatorOptions.FindAllStringIndex(newInput, -1)
+
+		// Find and label each operator instance
+		for i:=0; i<len(matches); i++ {
+			if string(newInput[matches[i][0]]) == "*" {
+				multiplicationMatchesMap[matches[i][0]] = true
+				multiplicationMatches = append(multiplicationMatches, matches[i][0])
+			} else if string(newInput[matches[i][0]]) == "/" {
+				divisionMatchesMap[matches[i][0]] = true
+				divisionMatches = append(divisionMatches, matches[i][0])
+			} else if string(newInput[matches[i][0]]) == "%" {
+				modulusMatchesMap[matches[i][0]] = true
+				modulusMatches = append(modulusMatches, matches[i][0])
+			} else if string(newInput[matches[i][0]]) == "+" {
+				additionMatchesMap[matches[i][0]] = true
+				additionMatches = append(additionMatches, matches[i][0])
+			} else if string(newInput[matches[i][0]]) == "-" {
+				if matches[i][0] > 0 {
+					if string(newInput[matches[i][0] - 1]) == "+" {
+						// We've got a '+-'
+						// Check whether a 'minus' sign is preceded by a multiplication, division, or modulus operator
+						if matches[i][0] - 1 > 0 {
+							if string(newInput[matches[i][0] - 2]) == "*" || string(newInput[matches[i][0] - 2]) == "/" || string(newInput[matches[i][0] - 2]) == "%" {
+								// Replace the '+' that was inserted earlier with a temporary token ('$')
+								newInput = replaceIndex(newInput, "$", matches[i][0]-1, matches[i][0]-1)
+							}
+						} else {
+							// Replace the '+' that was inserted earlier with a temporary token ('$')
+							newInput = replaceIndex(newInput, "$", matches[i][0]-1, matches[i][0]-1)
+						}
+					}
+				}
+			} else if string(newInput[matches[i][0]]) == "." {
+				// No need to handle this
+			} else {
+				err = errors.New("operator not supported")
+			}
 		}
+
+		// Remove all token ('$') instances
+		if strings.Index(newInput, "$") != -1 {
+			targetIndex := strings.Index(newInput, "$")
+			newInput = replaceIndex(newInput, "", targetIndex, targetIndex)
+			success = false
+		}
+
 	}
 
 	// Concatenate and sort all related operations
@@ -290,6 +337,7 @@ func findOperandLength(isFirst bool, i int, input string, matches []int) (operan
 	var operandComplete bool
 	var validOperandRunes = "0123456789.-"
 
+	// Check each successive character until an invalid operand character is found
 	for offset:=1; !operandComplete; offset++ {
 		var validChar bool
 		for _, char := range validOperandRunes {
@@ -311,7 +359,16 @@ func findOperandLength(isFirst bool, i int, input string, matches []int) (operan
 				}
 			}
 		}
+
+		// If an invalid character is found, then the length has been determined
 		if !validChar {
+			// Ensure for the second operand that the final 'valid' character isn't a trailing '-'
+			/*
+			if !isFirst && string(input[matches[i] + offset - 1]) == "-" {
+				operandLength--
+			}
+
+			 */
 			operandComplete = true
 			break
 		}
@@ -322,7 +379,7 @@ func findOperandLength(isFirst bool, i int, input string, matches []int) (operan
 
 }
 
-func FloatToString(num float64) string {
+func floatToString(num float64) string {
 
 	return strconv.FormatFloat(num, 'f', -1, 64)
 
